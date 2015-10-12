@@ -2,8 +2,11 @@
 name = "medium"
 version = "0.1.0"
 authors = ["softprops <d.tangren@gmail.com>"]
+keywords = ["hyper", "medium"]
+license = "MIT"
+
 
 [dependencies]
 hyper = "0.6"
-rustc-serialize = "0.3"
 url = "0.2"
+rustc-serialize = "0.3"
