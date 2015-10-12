@@ -1,4 +1,5 @@
 use rustc_serialize::Decodable;
+use std::default::Default;
 
 #[derive(Debug, RustcDecodable)]
 pub struct User {
@@ -18,9 +19,21 @@ pub enum ContentFormat {
   html, markdown
 }
 
+impl Default for ContentFormat {
+  fn default() -> ContentFormat {
+    ContentFormat::markdown
+  }
+}
+
 #[derive(Debug, RustcEncodable, RustcDecodable)]
 pub enum PublishStatus {
   public, draft, unlisted
+}
+
+impl Default for PublishStatus {
+  fn default() -> PublishStatus {
+    PublishStatus::public
+  }
 }
 
 #[derive(Debug, RustcEncodable, RustcDecodable)]
@@ -34,6 +47,12 @@ pub enum License {
   cc40zero,
   publicDomain,
   allRightsReserved
+}
+
+impl Default for License {
+  fn default() -> License {
+    License::allRightsReserved
+  }
 }
 
 #[derive(Debug, RustcEncodable)]
