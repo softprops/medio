@@ -25,7 +25,15 @@ pub enum PublishStatus {
 
 #[derive(Debug, RustcEncodable, RustcDecodable)]
 pub enum License {
-  cc40
+  cc40by,
+  cc40bySa,
+  cc40byNd,
+  cc40byNc,
+  cc40byNcNd,
+  cc40byNcSa,
+  cc40zero,
+  publicDomain,
+  allRightsReserved
 }
 
 #[derive(Debug, RustcEncodable)]
