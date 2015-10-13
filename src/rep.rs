@@ -55,16 +55,16 @@ impl Default for License {
   }
 }
 
-#[derive(Debug, RustcEncodable)]
+#[derive(Debug, RustcEncodable, Default)]
 pub struct Post<'a> {
-  title: &'a str,
+  pub title: &'a str,
 //  #[serde(rename(json="contentFormat"))]
-  content_format: ContentFormat,
-  content: &'a str,
-  tags: Option<Vec<&'a str>>,
+  pub content_format: ContentFormat,
+  pub content: &'a str,
+  pub tags: Option<Vec<&'a str>>,
  // #[serde(rename(json="canonicalUrl"))]
-  canonicalUrl: Option<&'a str>,
+  pub canonicalUrl: Option<&'a str>,
  // #[serde(rename(json="publishStatus"))]
-  publishStatus: Option<PublishStatus>,
-  license: Option<License>
+  pub publishStatus: Option<PublishStatus>,
+  pub license: Option<License>
 }
