@@ -68,3 +68,15 @@ pub struct Post<'a> {
   pub publishStatus: Option<PublishStatus>,
   pub license: Option<License>
 }
+
+#[derive(Debug, RustcDecodable)]
+pub struct Story{
+    pub id: String,
+    pub title: String,
+    pub authorId: String,
+    pub tags: Vec<String>,
+    pub url: String,
+    pub publishStatus: PublishStatus,
+    pub publishedAt: u64,
+    pub license: String
+}

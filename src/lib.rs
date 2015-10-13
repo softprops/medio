@@ -26,16 +26,16 @@ impl<'a> UserRef<'a> {
     }
 
     /// posts a new story
-    pub fn post(&self, post: &Post) -> Result<String> {
+    pub fn post(&self, post: &Post) -> Result<Story> {
         let data = json::encode(&post).unwrap();
-        println!("posting -> {:?} ", data);
         let body = try!(
             self.medium.post(
                 &format!("/v1/users/{}/posts", self.id),
                 data.as_bytes()
             )
         );
-        Ok(body)
+        let story: Data<Story> = json::decode(&body).unwrap();
+        Ok(story.data)
     }
 }
 
