@@ -4,6 +4,7 @@ extern crate rustc_serialize;
 mod rep;
 
 use hyper::Client;
+use hyper::header::ContentType;
 use hyper::client::{IntoUrl, RequestBuilder};
 use hyper::header::Authorization;
 use rustc_serialize::json;
@@ -95,8 +96,12 @@ impl<'a> Medium <'a> {
             _ => request_builder
         };
         let mut res = match body {
-            Some(ref bod) => authenticated.body(*bod).send().unwrap(),
-            _ => authenticated.send().unwrap()
+            Some(ref bod) => {
+                authenticated.header(ContentType::json())
+                    .body(*bod)
+                    .send()
+                    .unwrap()
+            }, _ => authenticated.send().unwrap()
         };
         let mut body = String::new();
         res.read_to_string(&mut body).unwrap();
