@@ -10,11 +10,14 @@ page.
 ```rust
 extern crate hyper;
 extern crate medio;
+
+use hyper::Client;
+use medio::{Medium, NewPost}
 use std::default::Default;
 
 fn main() {
-    let client = hyper::Client::new();
-    let medium = medio::Medium::new(
+    let client = Client::new();
+    let medium = Medium::new(
         &client,
         Some("t0k3n")
     );
@@ -25,11 +28,15 @@ fn main() {
            title: "hello rust",
            content: &format(
               r#" # hello medium.
+
                     meet rust.
+
                     love @{}.
                 "#, me.username
            ),
-           tags: Some(vec!["rust"]),
+           tags: Some(
+               vec!["rust"]
+           ),
            ..Default::default()
         }
     );
