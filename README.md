@@ -4,6 +4,10 @@
 
 > rustlang bindings to [Medium.com](https://medium.com/) api
 
+# apidocs
+
+Find them [here](https//softprops.github.io/medio)
+
 # usage
 
 To get started, you'll want grab an integration token from you're medium.com accounts [settings](https://medium.com/me/settings)
