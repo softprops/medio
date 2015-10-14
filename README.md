@@ -12,7 +12,7 @@ extern crate hyper;
 extern crate medio;
 
 use hyper::Client;
-use medio::{Medium, NewPost}
+use medio::{Medium, NewPost};
 use std::default::Default;
 
 fn main() {
