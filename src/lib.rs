@@ -7,7 +7,7 @@ use hyper::Client;
 use hyper::method::Method;
 use hyper::header::ContentType;
 use hyper::header::Authorization;
-use rustc_serialize::json;
+use rustc_serialize::{Decodable, json};
 pub use rep::*;
 use std::io::{Read, Result};
 
@@ -28,14 +28,10 @@ impl<'a> UserRef<'a> {
     /// posts a new story
     pub fn post(&self, post: &NewPost) -> Result<Post> {
         let data = json::encode(&post).unwrap();
-        let body = try!(
-            self.medium.post(
-                &format!("/v1/users/{}/posts", self.id),
-                data.as_bytes()
-            )
-        );
-        let post: Data<Post> = json::decode(&body).unwrap();
-        Ok(post.data)
+        self.medium.post::<Data<Post>>(
+            &format!("/v1/users/{}/posts", self.id),
+            data.as_bytes()
+        ).map(|d| d.data)
     }
 }
 
@@ -73,9 +69,7 @@ impl<'a> Medium <'a> {
 
     /// access to the authentied members user info
     pub fn me(&self) -> Result<User> {
-        let body = try!(self.get("/v1/me"));
-        let data: Data<User> = json::decode(&body).unwrap();
-        Ok(data.data)
+        self.get::<Data<User>>("/v1/me").map(|d| d.data)
     }
 
     /// access to a user reference
@@ -83,12 +77,12 @@ impl<'a> Medium <'a> {
         UserRef::new(self, id)
     }
 
-    fn request(
+    fn request<T>(
         &self,
         method: Method,
         uri: &str,
         body: Option<(ContentType, &'a [u8])>
-     ) -> Result<String> {
+     ) -> Result<T> where T: Decodable {
         let url = format!("{}{}", self.host, uri);
         let request_builder = self.client.request(
             method,
@@ -113,10 +107,12 @@ impl<'a> Medium <'a> {
         };
         let mut body = String::new();
         res.read_to_string(&mut body).unwrap();
-        Ok(body)
+        Ok(json::decode::<T>(&body).unwrap())
     }
 
-    fn post(&self, uri: &str, message: &[u8]) -> Result<String> {
+    fn post<T>(
+        &self, uri: &str, message: &[u8]
+    ) -> Result<T> where T: Decodable {
         self.request(
             Method::Post,
             uri,
@@ -124,7 +120,9 @@ impl<'a> Medium <'a> {
         )
     }
 
-    fn get(&self, uri: &str) -> Result<String> {
+    fn get<T>(
+        &self, uri: &str
+    ) -> Result<T> where T: Decodable {
         self.request(
             Method::Get,
             uri,
