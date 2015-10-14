@@ -19,13 +19,17 @@ fn main() {
         Some("t0k3n")
     );
     // fetch a reference to authenticated user info
-    let me = medium::me().unwrap();
-    medium.users(me.id).post(
+    let me = medium.me().unwrap();
+    medium.users(&me.id).post(
         &NewPost {
            title: "hello rust",
-           content: r#" # hello medium.
+           content: &format(
+              r#" # hello medium.
                     meet rust.
-                    "#
+                    love @{}.
+                "#, me.username),
+           tags: Some(vec!["rust"]),
+           ..Default::default()
         }
     );
 }
