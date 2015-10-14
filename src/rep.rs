@@ -1,6 +1,8 @@
 use rustc_serialize::{Decodable, Decoder, Encodable, Encoder};
 use std::default::Default;
 
+
+/// Represents a Medium user
 #[derive(Debug, RustcDecodable)]
 pub struct User {
   pub id: String,
@@ -9,11 +11,13 @@ pub struct User {
   pub imageUrl: String
 }
 
+/// An envelope for data that Medium response with
 #[derive(Debug, RustcDecodable)]
 pub struct Data<D: Decodable> {
   pub data: D
 }
 
+/// Indicator for type of content
 #[derive(Debug)]
 pub enum ContentFormat {
   Html, Markdown
@@ -48,6 +52,7 @@ impl Default for ContentFormat {
   }
 }
 
+/// One of three statuses a hosted post may have
 #[derive(Debug)]
 pub enum PublishStatus {
     Public, Draft, Unlisted
@@ -85,6 +90,7 @@ impl Decodable for PublishStatus {
     }
 }
 
+/// Licences that may be associated with posts
 #[derive(Debug, RustcDecodable)]
 pub enum License {
   Cc40By,
@@ -120,6 +126,7 @@ impl Default for License {
   }
 }
 
+/// Payload for creating new posts
 #[derive(Debug, RustcEncodable, Default)]
 pub struct NewPost<'a> {
   pub title: &'a str,
@@ -131,6 +138,7 @@ pub struct NewPost<'a> {
   pub license: Option<License>
 }
 
+/// Represents a saved post
 #[derive(Debug, RustcDecodable)]
 pub struct Post {
     pub id: String,
