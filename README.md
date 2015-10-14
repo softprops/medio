@@ -27,7 +27,8 @@ fn main() {
               r#" # hello medium.
                     meet rust.
                     love @{}.
-                "#, me.username),
+                "#, me.username
+           ),
            tags: Some(vec!["rust"]),
            ..Default::default()
         }
