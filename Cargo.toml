@@ -2,6 +2,9 @@
 name = "medio"
 version = "0.1.0"
 authors = ["softprops <d.tangren@gmail.com>"]
+description = "Rust interface for Medium API"
+homepage = "https://github.com/softprops/medio"
+repository = "https://github.com/softprops/medio"
 keywords = ["hyper", "medium"]
 license = "MIT"
 
