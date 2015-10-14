@@ -1,5 +1,5 @@
 [package]
-name = "medium"
+name = "medio"
 version = "0.1.0"
 authors = ["softprops <d.tangren@gmail.com>"]
 keywords = ["hyper", "medium"]
