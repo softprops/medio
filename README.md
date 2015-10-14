@@ -4,8 +4,8 @@
 
 # usage
 
-To get started you'll want grab an integration token from you're medium.com accounts [settings](https://medium.com/me/settings)
-page;
+To get started, you'll want grab an integration token from you're medium.com accounts [settings](https://medium.com/me/settings)
+page.
 
 ```rust
 extern crate hyper;
