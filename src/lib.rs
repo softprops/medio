@@ -4,8 +4,8 @@ extern crate rustc_serialize;
 mod rep;
 
 use hyper::Client;
+use hyper::method::Method;
 use hyper::header::ContentType;
-use hyper::client::{IntoUrl, RequestBuilder};
 use hyper::header::Authorization;
 use rustc_serialize::json;
 pub use rep::*;
@@ -83,11 +83,17 @@ impl<'a> Medium <'a> {
         UserRef::new(self, id)
     }
 
-    fn request<U: IntoUrl>(
+    fn request(
         &self,
-        request_builder: RequestBuilder<'a, U>,
+        method: Method,
+        uri: &str,
         body: Option<(ContentType, &'a [u8])>
-    ) -> Result<String> {
+     ) -> Result<String> {
+        let url = format!("{}{}", self.host, uri);
+        let request_builder = self.client.request(
+            method,
+            &url
+        );
         let authenticated = match self.token {
             Some(token) =>
                 request_builder.header(
@@ -111,17 +117,17 @@ impl<'a> Medium <'a> {
     }
 
     fn post(&self, uri: &str, message: &[u8]) -> Result<String> {
-        let url = format!("{}{}", self.host, uri);
         self.request(
-            self.client.post(&url),
+            Method::Post,
+            uri,
             Some((ContentType::json(), message))
         )
     }
 
     fn get(&self, uri: &str) -> Result<String> {
-        let url = format!("{}{}", self.host, uri);
         self.request(
-            self.client.get(&url),
+            Method::Get,
+            uri,
             None
         )
     }
