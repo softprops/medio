@@ -1,4 +1,4 @@
-use rustc_serialize::{Decodable, Encodable, Encoder};
+use rustc_serialize::{Decodable, Decoder, Encodable, Encoder};
 use std::default::Default;
 
 #[derive(Debug, RustcDecodable)]
@@ -14,9 +14,23 @@ pub struct Data<D: Decodable> {
   pub data: D
 }
 
-#[derive(Debug, RustcDecodable)]
+#[derive(Debug)]
 pub enum ContentFormat {
   Html, Markdown
+}
+
+impl Decodable for ContentFormat {
+    fn decode<D: Decoder>(decoder: &mut D) -> Result<ContentFormat, D::Error> {
+        decoder.read_enum("ContentFormat", move |this| {
+            this.read_enum_variant(&["html", "markdown"], move |this, idx| {
+                match idx {
+                    0 => Ok(ContentFormat::Html),
+                    1 => Ok(ContentFormat::Html),
+                    _ => unreachable!()
+                }
+            })
+        })
+    }
 }
 
 impl Encodable for ContentFormat {
@@ -34,10 +48,11 @@ impl Default for ContentFormat {
   }
 }
 
-#[derive(Debug, RustcDecodable)]
+#[derive(Debug)]
 pub enum PublishStatus {
     Public, Draft, Unlisted
 }
+
 
 impl Default for PublishStatus {
   fn default() -> PublishStatus {
@@ -48,10 +63,25 @@ impl Default for PublishStatus {
 impl Encodable for PublishStatus {
     fn encode<E: Encoder>(&self, encoder: &mut E) -> Result<(), E::Error> {
         match *self {
-            PublishStatus::Public => encoder.emit_str("html"),
-            PublishStatus::Draft => encoder.emit_str("markdown"),
+            PublishStatus::Public => encoder.emit_str("public"),
+            PublishStatus::Draft => encoder.emit_str("draft"),
             PublishStatus::Unlisted => encoder.emit_str("unlisted")
         }
+    }
+}
+
+impl Decodable for PublishStatus {
+    fn decode<D: Decoder>(decoder: &mut D) -> Result<PublishStatus, D::Error> {
+        decoder.read_enum("PublishStatus", move |this| {
+            this.read_enum_variant(&["public", "draft", "unlisted"], move |this, idx| {
+                match idx {
+                    0 => Ok(PublishStatus::Public),
+                    1 => Ok(PublishStatus::Draft),
+                    2 => Ok(PublishStatus::Unlisted),
+                    _ => unreachable!()
+                }
+            })
+        })
     }
 }
 
