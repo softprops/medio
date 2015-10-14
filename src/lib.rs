@@ -26,7 +26,7 @@ impl<'a> UserRef<'a> {
     }
 
     /// posts a new story
-    pub fn post(&self, post: &Post) -> Result<Story> {
+    pub fn post(&self, post: &NewPost) -> Result<Post> {
         let data = json::encode(&post).unwrap();
         let body = try!(
             self.medium.post(
@@ -34,8 +34,8 @@ impl<'a> UserRef<'a> {
                 data.as_bytes()
             )
         );
-        let story: Data<Story> = json::decode(&body).unwrap();
-        Ok(story.data)
+        let post: Data<Post> = json::decode(&body).unwrap();
+        Ok(post.data)
     }
 }
 
@@ -86,7 +86,7 @@ impl<'a> Medium <'a> {
     fn request<U: IntoUrl>(
         &self,
         request_builder: RequestBuilder<'a, U>,
-        body: Option<&'a [u8]>
+        body: Option<(ContentType, &'a [u8])>
     ) -> Result<String> {
         let authenticated = match self.token {
             Some(token) =>
@@ -96,9 +96,11 @@ impl<'a> Medium <'a> {
             _ => request_builder
         };
         let mut res = match body {
-            Some(ref bod) => {
-                authenticated.header(ContentType::json())
-                    .body(*bod)
+            Some((typ, body)) => {
+                authenticated.header(
+                    typ
+                    )
+                    .body(body)
                     .send()
                     .unwrap()
             }, _ => authenticated.send().unwrap()
@@ -112,7 +114,7 @@ impl<'a> Medium <'a> {
         let url = format!("{}{}", self.host, uri);
         self.request(
             self.client.post(&url),
-            Some(message)
+            Some((ContentType::json(), message))
         )
     }
 

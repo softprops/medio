@@ -1,4 +1,4 @@
-use rustc_serialize::Decodable;
+use rustc_serialize::{Decodable, Encodable, Encoder};
 use std::default::Default;
 
 #[derive(Debug, RustcDecodable)]
@@ -14,63 +14,95 @@ pub struct Data<D: Decodable> {
   pub data: D
 }
 
-#[derive(Debug, RustcEncodable, RustcDecodable)]
+#[derive(Debug, RustcDecodable)]
 pub enum ContentFormat {
-  html, markdown
+  Html, Markdown
+}
+
+impl Encodable for ContentFormat {
+    fn encode<E: Encoder>(&self, encoder: &mut E) -> Result<(), E::Error> {
+        match *self {
+            ContentFormat::Html => encoder.emit_str("html"),
+            ContentFormat::Markdown => encoder.emit_str("markdown"),
+        }
+    }
 }
 
 impl Default for ContentFormat {
   fn default() -> ContentFormat {
-    ContentFormat::markdown
+    ContentFormat::Markdown
   }
 }
 
-#[derive(Debug, RustcEncodable, RustcDecodable)]
+#[derive(Debug, RustcDecodable)]
 pub enum PublishStatus {
-  public, draft, unlisted
+    Public, Draft, Unlisted
 }
 
 impl Default for PublishStatus {
   fn default() -> PublishStatus {
-    PublishStatus::public
+    PublishStatus::Public
   }
 }
 
-#[derive(Debug, RustcEncodable, RustcDecodable)]
+impl Encodable for PublishStatus {
+    fn encode<E: Encoder>(&self, encoder: &mut E) -> Result<(), E::Error> {
+        match *self {
+            PublishStatus::Public => encoder.emit_str("html"),
+            PublishStatus::Draft => encoder.emit_str("markdown"),
+            PublishStatus::Unlisted => encoder.emit_str("unlisted")
+        }
+    }
+}
+
+#[derive(Debug, RustcDecodable)]
 pub enum License {
-  cc40by,
-  cc40bySa,
-  cc40byNd,
-  cc40byNc,
-  cc40byNcNd,
-  cc40byNcSa,
-  cc40zero,
-  publicDomain,
-  allRightsReserved
+  Cc40By,
+  Cc40BySa,
+  Cc40ByNd,
+  Cc40ByNc,
+  Cc40ByNcNd,
+  Cc40ByNcSa,
+  Cc40Zero,
+  PublicDomain,
+  AllRightsReserved
+}
+
+impl Encodable for License {
+    fn encode<E: Encoder>(&self, encoder: &mut E) -> Result<(), E::Error> {
+        match *self {
+            License::Cc40By => encoder.emit_str("cc-40-by"),
+            License::Cc40BySa => encoder.emit_str("cc-40-by-sa"),
+            License::Cc40ByNd => encoder.emit_str("cc-40-by-nd"),
+            License::Cc40ByNc => encoder.emit_str("cc-40-by-nc"),
+            License::Cc40ByNcNd => encoder.emit_str("cc-40-by-nc-nd"),
+            License::Cc40ByNcSa => encoder.emit_str("cc-40-by-nc-sa"),
+            License::Cc40Zero => encoder.emit_str("cc-40-zero"),
+            License::PublicDomain => encoder.emit_str("public-domain"),
+            License::AllRightsReserved => encoder.emit_str("all-rights-reserved")
+        }
+    }
 }
 
 impl Default for License {
   fn default() -> License {
-    License::allRightsReserved
+    License::AllRightsReserved
   }
 }
 
 #[derive(Debug, RustcEncodable, Default)]
-pub struct Post<'a> {
+pub struct NewPost<'a> {
   pub title: &'a str,
-//  #[serde(rename(json="contentFormat"))]
   pub content_format: ContentFormat,
   pub content: &'a str,
   pub tags: Option<Vec<&'a str>>,
- // #[serde(rename(json="canonicalUrl"))]
   pub canonicalUrl: Option<&'a str>,
- // #[serde(rename(json="publishStatus"))]
   pub publishStatus: Option<PublishStatus>,
   pub license: Option<License>
 }
 
 #[derive(Debug, RustcDecodable)]
-pub struct Story{
+pub struct Post {
     pub id: String,
     pub title: String,
     pub authorId: String,
