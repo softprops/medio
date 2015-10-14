@@ -4,11 +4,20 @@
 
 > rustlang bindings to [Medium.com](https://medium.com/) api
 
-# apidocs
+## apidocs
 
 Find them [here](https//softprops.github.io/medio)
 
-# usage
+## install
+
+add the following to your Cargo.toml file
+
+```toml
+[depenencies]
+medio = "0.1.0"
+```
+
+## usage
 
 To get started, you'll want grab an integration token from you're medium.com accounts [settings](https://medium.com/me/settings)
 page.
