@@ -1,15 +1,19 @@
 extern crate hyper;
 extern crate rustc_serialize;
 
+mod errors;
 mod rep;
 
 use hyper::Client;
 use hyper::method::Method;
-use hyper::header::ContentType;
-use hyper::header::Authorization;
+use hyper::header::{Authorization, ContentType};
+use hyper::status::StatusCode;
 use rustc_serialize::{Decodable, json};
 pub use rep::*;
-use std::io::{Read, Result};
+pub use errors::Error;
+use std::io::Read;
+
+pub type Result<T> = std::result::Result<T, Error>;
 
 /// reference point for creating new posts
 pub struct UserRef<'a> {
@@ -97,17 +101,27 @@ impl<'a> Medium <'a> {
         };
         let mut res = match body {
             Some((typ, body)) => {
-                authenticated.header(
+                try!(authenticated.header(
                     typ
                     )
                     .body(body)
-                    .send()
-                    .unwrap()
-            }, _ => authenticated.send().unwrap()
+                    .send())
+            }, _ => try!(authenticated.send())
         };
-        let mut body = String::new();
-        res.read_to_string(&mut body).unwrap();
-        Ok(json::decode::<T>(&body).unwrap())
+        match res.status {
+            StatusCode::BadRequest
+            | StatusCode::Unauthorized
+            | StatusCode::Forbidden
+            | StatusCode::NotFound => Err(
+                Error::Fault { code: res.status }
+            ),
+            _ => {
+                let mut body = String::new();
+                try!(res.read_to_string(&mut body));
+                Ok(json::decode::<T>(&body).unwrap())
+            }
+        }
+
     }
 
     fn post<T>(
