@@ -59,4 +59,8 @@ fn main() {
 
 ```
 
+### resources
+
+* medium [api docs](https://github.com/Medium/medium-api-docs)
+
 Doug Tangren (softprops) 2015
