@@ -6,7 +6,7 @@
 
 ## apidocs
 
-Find them [here](https//softprops.github.io/medio)
+Find them [here](https://softprops.github.io/medio)
 
 ## install
 
