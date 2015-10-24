@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/softprops/medio.svg?branch=master)](https://travis-ci.org/softprops/medio)
 
+[![crates.io](http://meritbadge.herokuapp.com/medio)](https://crates.io/crates/medio)
+
 > rustlang bindings to [Medium.com](https://medium.com/) api
 
 ## apidocs
